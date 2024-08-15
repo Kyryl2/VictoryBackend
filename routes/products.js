@@ -6,9 +6,12 @@ const router = express.Router();
 // Отримати всі продукти
 router.get('/', async (req, res) => {
   try {
+    console.log("Fetching products...");
     const products = await Product.find();
+    console.log("Products fetched:", products);
     res.json(products);
   } catch (err) {
+    console.error("Error occurred:", err);
     res.status(500).send('Server errorrr');
   }
 });
