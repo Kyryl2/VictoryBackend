@@ -16,12 +16,12 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(express.json());
 
 // Роутинг
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/orders', require('./routes/orders'));
-app.post('/register', (req, res) => {
-    res.send('Registration endpoint');
-  });
+app.use('/api/auth', require('./routes/auth.js'));
+app.use('/api/products', require('./routes/products.js'));
+app.use('/api/orders', require('./routes/orders.js'));
+// app.post('/register', (req, res) => {
+//     res.send('Registration endpoint');
+//   });
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
