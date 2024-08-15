@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const app = express();
 
+
 // Підключення до MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
