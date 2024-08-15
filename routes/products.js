@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(500).send('Server errorrr');
   }
 });
 
