@@ -22,7 +22,7 @@ app.use(express.json());
 
 // Роутинг
 app.post('/register', async (req, res, next) => {
-  try {
+
     const { email, password, name } = req.body;
     const existingUser = await User.findOne({ email });
 
@@ -39,10 +39,10 @@ app.post('/register', async (req, res, next) => {
         subscription: newUser.subscription,  // Залиште або видаліть це, залежно від схеми
       },
     });
-  } catch (error) {
-    console.error('Error during registration:', error.message);  // Логування помилки
-    res.status(500).send('Server error');
-  }
+  // } catch (error) {
+  //   console.error('Error during registration:', error.message);  // Логування помилки
+  //   res.status(500).send('Server error');
+  // }
 });
 app.use('/api/auth', require('./routes/auth.js'));
 app.use('/api/products', require('./routes/products.js'));
