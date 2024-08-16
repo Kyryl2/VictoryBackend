@@ -1,32 +1,20 @@
-const express = require('express');
-const Product = require('../models/Product');
+import express from 'express';
+import Product from '../models/Product.js';
 
 const router = express.Router();
 
-// Отримати всі продукти
+// Отримати список товарів
 router.get('/', async (req, res) => {
-  try {
-    console.log("Fetching products...");
-    const products = await Product.find();
-    console.log("Products fetched:", products);
-    res.json(products);
-  } catch (err) {
-    console.error("Error occurred:", err);
-    res.status(500).send('Server errorrr');
-  }
+  const products = await Product.find();
+  res.json(products);
 });
 
-// Створити новий продукт (адмін-роль)
+// Додати новий товар (адміністративний маршрут)
 router.post('/', async (req, res) => {
-  const { name, category, price, description, image } = req.body;
-
-  try {
-    const newProduct = new Product({ name, category, price, description, image });
-    const product = await newProduct.save();
-    res.json(product);
-  } catch (err) {
-    res.status(500).send('Server error');
-  }
+  const { name, price, description } = req.body;
+  const product = new Product({ name, price, description });
+  await product.save();
+  res.status(201).json(product);
 });
 
-module.exports = router;
+export default router;

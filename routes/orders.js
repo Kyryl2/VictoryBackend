@@ -1,35 +1,41 @@
-const express = require('express');
-const Order = require('../models/Order');
-const auth = require('../middlewares/authmiddleware.js');
+import express from 'express';
+import Order from '../models/Order.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// Створити нове замовлення
-router.post('/', auth, async (req, res) => {
-  const { products, total } = req.body;
+// Додати товар до кошика
+router.post('/cart', authMiddleware, async (req, res) => {
+  const { productId, quantity } = req.body;
+  const order = await Order.findOne({ user: req.user._id, status: 'Pending' });
+  const productIndex = order.products.findIndex(p => p.product.toString() === productId);
 
-  try {
-    const newOrder = new Order({
-      user: req.user.id,
-      products,
-      total
-    });
-
-    const order = await newOrder.save();
-    res.json(order);
-  } catch (err) {
-    res.status(500).send('Server error');
+  if (productIndex > -1) {
+    order.products[productIndex].quantity += quantity;
+  } else {
+    order.products.push({ product: productId, quantity });
   }
+
+  order.total = order.products.reduce((total, p) => total + p.quantity * p.product.price, 0);
+  await order.save();
+
+  res.json(order);
 });
 
-// Отримати всі замовлення користувача
-router.get('/', auth, async (req, res) => {
-  try {
-    const orders = await Order.find({ user: req.user.id }).populate('products.product');
-    res.json(orders);
-  } catch (err) {
-    res.status(500).send('Server error');
-  }
+// Перегляд кошика
+router.get('/cart', authMiddleware, async (req, res) => {
+  const order = await Order.findOne({ user: req.user._id, status: 'Pending' }).populate('products.product');
+  res.json(order);
 });
 
-module.exports = router;
+// Оформити замовлення
+router.post('/checkout', authMiddleware, async (req, res) => {
+  const order = await Order.findOne({ user: req.user._id, status: 'Pending' });
+  if (!order) return res.status(400).json({ error: 'No order found' });
+
+  order.status = 'Completed';
+  await order.save();
+  res.json(order);
+});
+
+export default router;
