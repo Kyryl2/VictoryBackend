@@ -1,10 +1,10 @@
 import express from 'express';
 import Order from '../models/Order.js';
- import authMiddleware from '../middlewares/authMiddleware.js';
+ import authmiddleware from '../middlewares/authmiddleware.js';
 const router = express.Router();
 
 // Додати товар до кошика
-router.post('/cart', authMiddleware, async (req, res) => {
+router.post('/cart', authmiddleware, async (req, res) => {
   const { productId, quantity } = req.body;
   const order = await Order.findOne({ user: req.user._id, status: 'Pending' });
   const productIndex = order.products.findIndex(p => p.product.toString() === productId);
@@ -22,13 +22,13 @@ router.post('/cart', authMiddleware, async (req, res) => {
 });
 
 // Перегляд кошика
-router.get('/cart', authMiddleware, async (req, res) => {
+router.get('/cart', authmiddleware, async (req, res) => {
   const order = await Order.findOne({ user: req.user._id, status: 'Pending' }).populate('products.product');
   res.json(order);
 });
 
 // Оформити замовлення
-router.post('/checkout', authMiddleware, async (req, res) => {
+router.post('/checkout', authmiddleware, async (req, res) => {
   const order = await Order.findOne({ user: req.user._id, status: 'Pending' });
   if (!order) return res.status(400).json({ error: 'No order found' });
 
