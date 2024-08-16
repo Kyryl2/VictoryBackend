@@ -4,6 +4,7 @@ const { mongoURI } = require('./config');
 require('dotenv').config();
 const cors = require('cors');
 const User = require('./models/User');
+const bcrypt = require('bcryptjs');
 
 
 const app = express();
