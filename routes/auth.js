@@ -7,23 +7,46 @@ const { jwtSecret } = require('../config');
 const router = express.Router();
 
 // Реєстрація
-router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+// router.post('/register', async (req, res) => {
+//   const { name, email, password } = req.body;
 
+//   try {
+//     let user = await User.findUser({ email });
+//     if (user) return res.status(400).json({ msg: 'User already exists' });
+
+//     user = new User({ name, email, password });
+//     await user.save();
+
+//     const payload = { user: { id: user.id }};
+//     jwt.sign(payload, jwtSecret, { expiresIn: 360000 }, (err, token) => {
+//       if (err) throw err;
+//       res.json({ token });
+//     });
+//   } catch (err) {
+//     res.status(500).send('Server error');
+//   }
+// });
+
+router.post('/register',  async (req, res, next) => {
   try {
-    let user = await User.findUser({ email });
-    if (user) return res.status(400).json({ msg: 'User already exists' });
+    const { email, password,name } = req.body;
+    const existingUser = await User.findOne({ email });
 
-    user = new User({ name, email, password });
-    await user.save();
+    if (existingUser) {
+      return res.status(409).json({ message: "Email in use" });
+    }
 
-    const payload = { user: { id: user.id }};
-    jwt.sign(payload, jwtSecret, { expiresIn: 360000 }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ email, password: hashedPassword,name });
+
+    res.status(201).json({
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription,
+      },
     });
-  } catch (err) {
-    res.status(500).send('Server error');
+  } catch (error) {
+    next(error);
   }
 });
 
