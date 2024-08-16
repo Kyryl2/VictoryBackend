@@ -11,7 +11,7 @@ const app = express();
 // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log('MongoDB Connected'))
 //   .catch(err => console.log(err));
-  mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect("mongodb+srv://user_21:kirill1999@cluster0.83y84hi.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log('MongoDB Connection Error:', err));
 
