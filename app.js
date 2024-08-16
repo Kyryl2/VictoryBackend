@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { mongoURI } = require('./config');
 require('dotenv').config();
+const cors = require('cors');
 
 
 const app = express();
-
+app.use(cors());
 
 // Підключення до MongoDB
 // mongoose.connect(process.env.MONGO_URI)
