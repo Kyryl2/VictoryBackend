@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const bcrypt = require('bcryptjs');
 
 
  
@@ -7,6 +7,10 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
+  name: {
+    type: String,
+    required: [true, "Name is required"],
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -16,7 +20,6 @@ const userSchema = new Schema({
     required: [true, "Email is required"],
     unique: true,
   },
-  
   token: {
     type: String,
     default: null,

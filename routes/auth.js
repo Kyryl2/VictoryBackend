@@ -42,7 +42,7 @@ router.post('/register',  async (req, res, next) => {
     res.status(201).json({
       user: {
         email: newUser.email,
-        subscription: newUser.subscription,
+       
       },
     });
   } catch (error) {
