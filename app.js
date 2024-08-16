@@ -7,8 +7,12 @@ const User = require('./models/User');
 
 
 const app = express();
-app.use(cors());
 
+app.use(cors({
+  origin: '*', // Дозволити запити з будь-якого домену
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Дозволити передачу cookie
+}));
 // Підключення до MongoDB
 // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log('MongoDB Connected'))
