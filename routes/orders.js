@@ -1,7 +1,6 @@
 import express from 'express';
 import Order from '../models/Order.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
-
+ import authMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 // Додати товар до кошика
