@@ -27,9 +27,9 @@ const router = express.Router();
 //   }
 // });
 
-router.post('/register',  async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   try {
-    const { email, password,name } = req.body;
+    const { email, password, name } = req.body;
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -37,19 +37,19 @@ router.post('/register',  async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword,name });
+    const newUser = await User.create({ email, password: hashedPassword, name });
 
     res.status(201).json({
       user: {
         email: newUser.email,
-       
+        subscription: newUser.subscription,  // Залиште або видаліть це, залежно від схеми
       },
     });
   } catch (error) {
-    next(error);
+    console.error('Error during registration:', error.message);  // Логування помилки
+    res.status(500).send('Server error');
   }
 });
-
 // Логін
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;

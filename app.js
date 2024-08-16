@@ -13,6 +13,9 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
 
 // Middleware
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
 app.use(express.json());
 
 // Роутинг
