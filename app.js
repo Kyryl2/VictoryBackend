@@ -4,12 +4,12 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import orderRoutes from './routes/orders.js';
-
+import  cors from "cors"
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 mongoose.connect(process.env.MONGO_URI
  
 );
