@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, // true для 465, false для інших портів
   auth: {
-    user: process.env.URK_NET_EMAIL, // Ваш email
-    pass: process.env.URK_NET_PASSWORD, // Ваш пароль
+    user: "slavaukraine21@ukr.net", // Ваш email
+    pass: "vsb6rZZ8Oaejmq93", // Ваш пароль
   },
 });
 
@@ -36,8 +36,8 @@ router.post("/checkout", authmiddleware, async (req, res) => {
 
     // Відправка електронного листа з деталями замовлення
     const mailOptions = {
-      from: process.env.URK_NET_EMAIL,
-      to: process.env.URK_NET_EMAIL,
+      from: "slavaukraine21@ukr.net",
+      to: "slavaukraine21@ukr.net",
       subject: "New Order Completed",
       text: `Order ID: ${order._id}\nTotal: ${
         order.total
