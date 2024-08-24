@@ -46,14 +46,14 @@ router.post("/checkout", authmiddleware, async (req, res) => {
         .join(", ")}`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-        return res.status(500).json({ error: "Failed to send email" });
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
+    // Використання async/await для надсилання електронного листа
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent:", info.response);
+    } catch (emailError) {
+      console.error("Error sending email:", emailError);
+      return res.status(500).json({ error: "Failed to send email" });
+    }
 
     // Створення нового замовлення з порожнім кошиком для користувача
     const newOrder = new Order({
@@ -70,7 +70,6 @@ router.post("/checkout", authmiddleware, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 // Додати товар до кошика
 router.post("/cart", authmiddleware, async (req, res) => {
   try {
