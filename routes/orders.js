@@ -3,8 +3,11 @@ import Order from "../models/Order.js";
 import authmiddleware from "../middlewares/authmiddleware.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+
 dotenv.config();
 const router = express.Router();
+
+// Налаштування транспорту для надсилання електронних листів
 const transporter = nodemailer.createTransport({
   host: "smtp.ukr.net", // SMTP-сервер
   port: 465,
@@ -39,7 +42,7 @@ router.post("/checkout", authmiddleware, async (req, res) => {
       text: `Order ID: ${order._id}\nTotal: ${
         order.total
       }\nProducts: ${order.products
-        .map((p) => `${p.product.name} x ${p.quantity}`)
+        .map((p) => `${p.name} x ${p.quantity}`)
         .join(", ")}`,
     };
 
@@ -63,70 +66,113 @@ router.post("/checkout", authmiddleware, async (req, res) => {
 
     res.json({ order, message: "Order completed and cart cleared" });
   } catch (error) {
+    console.error("Error processing checkout:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
 // Додати товар до кошика
 router.post("/cart", authmiddleware, async (req, res) => {
-  const { productId, quantity } = req.body;
-  const order = await Order.findOne({ user: req.user._id, status: "Pending" });
+  try {
+    // Деструктуризація даних з тіла запиту
+    const { name, description, price, img } = req.body;
 
-  if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    // Знайти замовлення користувача зі статусом "Pending"
+    let order = await Order.findOne({ user: req.user._id, status: "Pending" });
+
+    // Якщо замовлення не знайдено, створюємо нове замовлення
+    if (!order) {
+      order = new Order({
+        user: req.user._id,
+        status: "Pending",
+        products: [],
+        total: 0,
+      });
+    }
+
+    // Перевіряємо, чи продукт уже є в замовленні
+    const productIndex = order.products.findIndex((p) => p.name === name);
+
+    if (productIndex > -1) {
+      // Якщо продукт уже є в замовленні, збільшуємо кількість
+      order.products[productIndex].quantity += 1; // або додайте логіку для зміни кількості
+    } else {
+      // Якщо продукт не знайдено, додаємо новий продукт
+      order.products.push({
+        name,
+        description,
+        price,
+        img,
+        quantity: 1, // встановлюємо початкову кількість
+      });
+    }
+
+    // Оновлюємо загальну суму замовлення
+    order.total = order.products.reduce(
+      (total, p) => total + p.quantity * p.price,
+      0
+    );
+
+    // Зберігаємо замовлення
+    await order.save();
+
+    res.json(order);
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    res.status(500).json({ error: "Server error" });
   }
-
-  const productIndex = order.products.findIndex(
-    (p) => p.product.toString() === productId
-  );
-
-  if (productIndex > -1) {
-    order.products[productIndex].quantity += quantity;
-  } else {
-    order.products.push({ product: productId, quantity });
-  }
-
-  order.total = order.products.reduce(
-    (total, p) => total + p.quantity * p.product.price,
-    0
-  );
-  await order.save();
-
-  res.json(order);
 });
 
 // Перегляд кошика
 router.get("/cart", authmiddleware, async (req, res) => {
-  const order = await Order.findOne({
-    user: req.user._id,
-    status: "Pending",
-  }).populate("products.product");
-  res.json(order);
+  try {
+    const order = await Order.findOne({
+      user: req.user._id,
+      status: "Pending",
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 // Видалити товар з кошика
-router.delete("/cart/:productId", authmiddleware, async (req, res) => {
-  const { productId } = req.params;
-  const order = await Order.findOne({ user: req.user._id, status: "Pending" });
+router.delete("/cart/:productName", authmiddleware, async (req, res) => {
+  try {
+    const { productName } = req.params;
+    const order = await Order.findOne({
+      user: req.user._id,
+      status: "Pending",
+    });
 
-  if (!order) {
-    return res.status(404).json({ error: "Order not found" });
-  }
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
 
-  const productIndex = order.products.findIndex(
-    (p) => p.product.toString() === productId
-  );
-
-  if (productIndex > -1) {
-    order.products.splice(productIndex, 1);
-    order.total = order.products.reduce(
-      (total, p) => total + p.quantity * p.product.price,
-      0
+    const productIndex = order.products.findIndex(
+      (p) => p.name === productName
     );
-    await order.save();
-    res.json(order);
-  } else {
-    res.status(404).json({ error: "Product not found in cart" });
+
+    if (productIndex > -1) {
+      order.products.splice(productIndex, 1);
+      order.total = order.products.reduce(
+        (total, p) => total + p.quantity * p.price,
+        0
+      );
+      await order.save();
+      res.json(order);
+    } else {
+      res.status(404).json({ error: "Product not found in cart" });
+    }
+  } catch (error) {
+    console.error("Error removing product from cart:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
