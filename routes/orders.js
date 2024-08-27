@@ -74,7 +74,7 @@ router.post("/checkout", authmiddleware, async (req, res) => {
 router.post("/cart", authmiddleware, async (req, res) => {
   try {
     // Деструктуризація даних з тіла запиту
-    const { name, description, price, img } = req.body;
+    const { name, description, price, img, quantity } = req.body;
 
     // Знайти замовлення користувача зі статусом "Pending"
     let order = await Order.findOne({ user: req.user._id, status: "Pending" });
@@ -102,7 +102,7 @@ router.post("/cart", authmiddleware, async (req, res) => {
         description,
         price,
         img,
-        quantity: 1, // встановлюємо початкову кількість
+        quantity, // встановлюємо початкову кількість
       });
     }
 
