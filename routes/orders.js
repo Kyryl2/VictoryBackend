@@ -94,7 +94,7 @@ router.post("/cart", authmiddleware, async (req, res) => {
 
     if (productIndex > -1) {
       // Якщо продукт уже є в замовленні, збільшуємо кількість
-      order.products[productIndex].quantity += 1; // або додайте логіку для зміни кількості
+      order.products[productIndex].quantity += quantity; // або додайте логіку для зміни кількості
     } else {
       // Якщо продукт не знайдено, додаємо новий продукт
       order.products.push({
