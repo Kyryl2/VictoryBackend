@@ -174,24 +174,27 @@ router.delete("/cart/:productName", authmiddleware, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-router.patch("/cart/:productId", authmiddleware, async (req, res) => {
+router.patch("/cart", authmiddleware, async (req, res) => {
   try {
-    const { productId } = req.params;
-    const { quantity } = req.body;
+    const { name, quantity } = req.body;
 
+    // Find the order of the user with status "Pending"
     let order = await Order.findOne({ user: req.user._id, status: "Pending" });
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    // Find the product by name
     const productIndex = order.products.findIndex(
-      (product) => product._id.toString() === productId
+      (product) => product.name === name
     );
 
     if (productIndex === -1) {
       return res.status(404).json({ message: "Product not found in order" });
     }
 
+    // Update the product quantity
     order.products[productIndex].quantity = quantity;
     await order.save();
 
