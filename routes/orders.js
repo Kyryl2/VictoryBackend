@@ -174,5 +174,31 @@ router.delete("/cart/:productName", authmiddleware, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+router.patch("/cart/:productId", authmiddleware, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { quantity } = req.body;
+
+    let order = await Order.findOne({ user: req.user._id, status: "Pending" });
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const productIndex = order.products.findIndex(
+      (product) => product._id.toString() === productId
+    );
+
+    if (productIndex === -1) {
+      return res.status(404).json({ message: "Product not found in order" });
+    }
+
+    order.products[productIndex].quantity = quantity;
+    await order.save();
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 export default router;
