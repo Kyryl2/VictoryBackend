@@ -196,6 +196,12 @@ router.patch("/cart", authmiddleware, async (req, res) => {
 
     // Update the product quantity
     order.products[productIndex].quantity = quantity;
+    // Оновлюємо загальну суму замовлення
+    order.total = order.products.reduce(
+      (total, product) => total + product.quantity * product.price,
+      0
+    );
+
     await order.save();
 
     res.json(order);
