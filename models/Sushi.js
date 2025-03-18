@@ -7,4 +7,5 @@ const SushiSchema = new mongoose.Schema({
 });
 
 const Sushi = mongoose.model("Sushi", SushiSchema);
+
 export default Sushi;
