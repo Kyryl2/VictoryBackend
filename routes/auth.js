@@ -11,6 +11,7 @@ router.post("/register", async (req, res) => {
     const user = new User({ name, email, password });
     await user.save();
 
+    // eslint-disable-next-line no-undef
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
