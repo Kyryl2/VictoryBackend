@@ -3,7 +3,6 @@ import Sushi from "../models/Sushi.js";
 
 const router = express.Router();
 
-// Отримати список суші
 router.get("/", async (req, res) => {
   const sushi = await Sushi.find();
   res.json(sushi);
