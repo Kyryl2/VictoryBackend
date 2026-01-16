@@ -50,7 +50,6 @@ router.post("/refresh", (req, res) => {
   }
 
   try {
-    // Перевіряємо токен
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Генеруємо новий токен на основі існуючого
