@@ -3,7 +3,6 @@ import Pizza from "../models/Pizza.js";
 
 const router = express.Router();
 
-// Отримати список піц
 router.get("/", async (req, res) => {
   const pizzas = await Pizza.find();
   res.json(pizzas);
