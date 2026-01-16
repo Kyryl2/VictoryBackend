@@ -4,7 +4,6 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-// Реєстрація
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -58,7 +57,7 @@ router.post("/refresh", (req, res) => {
     const newToken = jwt.sign(
       { userId: decoded.userId },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     res.json({ token: newToken });
