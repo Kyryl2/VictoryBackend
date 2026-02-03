@@ -19,6 +19,7 @@
     "mongodb": "3.0",
     "mongoose": "^8.5.3",
     "nanoid": "^5.0.7",
-    "nodemailer": "^6.9.14"
+    "nodemailer": "^6.9.14",
+    "resend": "^6.9.1"
   }
 }
