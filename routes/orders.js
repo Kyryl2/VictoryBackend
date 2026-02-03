@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   secure: true, // true для 465, false для інших портів
   auth: {
     user: "slavaukraine21@ukr.net", // Ваш email
-    pass: "tQSngI3a1S78rwDi", // Ваш пароль
+    pass: "PfOIYGG3mBJmAXr1", // Ваш пароль
   },
 });
 
