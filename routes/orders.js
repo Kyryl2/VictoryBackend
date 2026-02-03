@@ -1,4 +1,3 @@
-
 // router.js
 import express from "express";
 import Order from "../models/Order.js";
@@ -10,18 +9,17 @@ const router = express.Router();
 // Настройка Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Функция отправки письма
 async function sendOrderEmail(to, order) {
   const productsList = order.products
-    .map(p => ${p.name} — ${p.quantity} x ${p.price} грн)
+    .map((p) => `${p.name} — ${p.quantity} x ${p.price} грн`)
     .join("\n");
 
   try {
     const data = await resend.emails.send({
-      from: "slavaukraine21@ukr.net", // твоя украинская почта
+      from: "slavaukraine21@ukr.net",
       to,
-      subject: Ваш заказ #${order._id},
-      text: Спасибо за заказ!\n\nСостав заказа:\n${productsList}\n\nИтог: ${order.total} грн,
+      subject: `Ваш заказ #${order._id}`,
+      text: `Спасибо за заказ!\n\nСостав заказа:\n${productsList}\n\nИтог: ${order.total} грн`,
     });
 
     console.log("MAIL SENT", data);
@@ -69,7 +67,7 @@ router.patch("/cart", authmiddleware, async (req, res) => {
     // пересчёт total
     order.total = order.products.reduce(
       (total, p) => total + p.quantity * p.price,
-      0
+      0,
     );
 
     await order.save();
@@ -100,14 +98,19 @@ router.delete("/cart/:productName", authmiddleware, async (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    const productIndex = order.products.findIndex((p) => p.name === productName);
+    const productIndex = order.products.findIndex(
+      (p) => p.name === productName,
+    );
 
     if (productIndex === -1) {
       return res.status(404).json({ error: "Product not found in cart" });
     }
 
     order.products.splice(productIndex, 1);
-    order.total = order.products.reduce((total, p) => total + p.quantity * p.price, 0);
+    order.total = order.products.reduce(
+      (total, p) => total + p.quantity * p.price,
+      0,
+    );
 
     await order.save();
 
