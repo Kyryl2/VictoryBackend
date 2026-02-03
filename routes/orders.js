@@ -2,7 +2,7 @@
 import express from "express";
 import Order from "../models/Order.js";
 import authmiddleware from "../middlewares/authmiddleware.js";
-import Resend from "resend";
+import { Resend } from "resend";
 
 const router = express.Router();
 
