@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   secure: true, // true для 465, false для інших портів
   auth: {
     user: "slavaukraine21@ukr.net", // Ваш email
-    pass: "CDDoU4EkaoxVHKak", // Ваш пароль
+    pass: "tQSngI3a1S78rwDi", // Ваш пароль
   },
 });
 
@@ -109,7 +109,7 @@ router.post("/cart", authmiddleware, async (req, res) => {
     // Оновлюємо загальну суму замовлення
     order.total = order.products.reduce(
       (total, p) => total + p.quantity * p.price,
-      0
+      0,
     );
 
     // Зберігаємо замовлення
@@ -155,14 +155,14 @@ router.delete("/cart/:productName", authmiddleware, async (req, res) => {
     }
 
     const productIndex = order.products.findIndex(
-      (p) => p.name === productName
+      (p) => p.name === productName,
     );
 
     if (productIndex > -1) {
       order.products.splice(productIndex, 1);
       order.total = order.products.reduce(
         (total, p) => total + p.quantity * p.price,
-        0
+        0,
       );
       await order.save();
       res.json(order);
@@ -187,7 +187,7 @@ router.patch("/cart", authmiddleware, async (req, res) => {
 
     // Find the product by name
     const productIndex = order.products.findIndex(
-      (product) => product.name === name
+      (product) => product.name === name,
     );
 
     if (productIndex === -1) {
@@ -199,7 +199,7 @@ router.patch("/cart", authmiddleware, async (req, res) => {
     // Оновлюємо загальну суму замовлення
     order.total = order.products.reduce(
       (total, product) => total + product.quantity * product.price,
-      0
+      0,
     );
 
     await order.save();
