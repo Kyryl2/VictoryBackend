@@ -10,7 +10,7 @@ const router = express.Router();
 // Налаштування транспорту для надсилання електронних листів
 const transporter = nodemailer.createTransport({
   host: "smtp.ukr.net", // SMTP-сервер
-  port: 465,
+  port: 587,
   secure: true, // true для 465, false для інших портів
   auth: {
     user: "slavaukraine21@ukr.net", // Ваш email
